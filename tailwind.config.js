@@ -8,39 +8,39 @@ export default {
     extend: {
       colors: {
         brand: {
-          50: '#eff6ff',
-          100: '#dbeafe',
-          200: '#bfdbfe',
-          300: '#93c5fd',
-          400: '#60a5fa',
-          500: '#3b82f6',
-          600: '#2563eb',
-          700: '#1d4ed8',
-          800: '#1e40af',
-          900: '#1e3a8a',
-          950: '#172554',
+          50: '#f0eaff',
+          100: '#e4d5ff',
+          200: '#c6c6fc', /* light mute */
+          300: '#ab8cff',
+          400: '#8a5cff',
+          500: '#4f2990', /* main purple */
+          600: '#3e1e75',
+          700: '#2e155c',
+          800: '#200e42',
+          900: '#0d0b26', /* main dark bg */
+          950: '#060412',
         },
         primary: {
-          50: '#eff6ff',
-          100: '#dbeafe',
-          200: '#bfdbfe',
-          300: '#93c5fd',
-          400: '#60a5fa',
-          500: '#3b82f6',
-          600: '#2563eb',
-          700: '#1d4ed8',
-          800: '#1e40af',
-          900: '#1e3a8a',
-          950: '#172554',
+          50: '#e0fbff',
+          100: '#bdf7ff',
+          200: '#8cf3ff',
+          300: '#4addf2', /* main cyan */
+          400: '#26c5db',
+          500: '#0ea4bc',
+          600: '#08829a',
+          700: '#0c687e',
+          800: '#0b5668',
+          900: '#0c4858',
+          950: '#042f3d',
         },
         dark: {
-          bg: '#0a192f',
-          surface: '#112240',
-          border: '#233554',
+          bg: '#0d0b26',
+          surface: '#15123d',
+          border: '#332468',
         }
       },
       fontFamily: {
-        sans: ['Inter', 'system-ui', 'sans-serif'],
+        sans: ['Syne', 'sans-serif'],
       }
     },
   },

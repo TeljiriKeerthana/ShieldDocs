@@ -75,12 +75,41 @@ export default function ViewDocument() {
     fetchShare();
     
     // Security Listeners
+    const handleScreenshotAttempt = (method) => {
+      alert(`⚠ Action tracking: Security policy violation detected! (${method})`);
+      logActivity("screenshot_attempt");
+      // Optional: Auto-revoke on severe violation
+      // supabase.from("shares").update({ status: 'Revoked' }).eq("id", id);
+    };
+
     const handleKeydown = (e) => {
-      // Basic anti-ss checks (PrntScrn, Ctrl+C, Ctrl+P)
-      if (e.key === "PrintScreen" || (e.ctrlKey && e.key === "c") || (e.metaKey && e.key === "c") || (e.ctrlKey && e.key === "p") || (e.metaKey && e.key === "p")) {
+      // PrintScreen (often only fires on keyup, but check keydown just in case)
+      if (e.key === "PrintScreen") {
         e.preventDefault();
-        alert("⚠ Action tracking: Security policy violation detected!");
-        logActivity(e.key === "PrintScreen" ? "screenshot_attempt" : "copy_or_print_attempt");
+        handleScreenshotAttempt("PrintScreen Key");
+      }
+      // Windows Snipping Tool (Win + Shift + S)
+      if (e.shiftKey && e.metaKey && e.key.toLowerCase() === "s") {
+         e.preventDefault();
+         handleScreenshotAttempt("Windows Snipping Tool");
+      }
+      // Mac Screenshot (Cmd + Shift + 3, Cmd + Shift + 4, Cmd + Shift + 5)
+      if (e.shiftKey && e.metaKey && (e.key === "3" || e.key === "4" || e.key === "5")) {
+         e.preventDefault();
+         handleScreenshotAttempt("Mac Screenshot Shortcut");
+      }
+      // Copy/Print
+      if ((e.ctrlKey || e.metaKey) && (e.key === "c" || e.key === "p" || e.key === "s")) {
+        e.preventDefault();
+        alert("⚠ Action tracking: Copy/Print/Save is disabled.");
+        logActivity("copy_or_print_attempt");
+      }
+    };
+
+    const handleKeyup = (e) => {
+      if (e.key === "PrintScreen") {
+        e.preventDefault();
+        handleScreenshotAttempt("PrintScreen KeyUp");
       }
     };
 
@@ -89,26 +118,43 @@ export default function ViewDocument() {
       logActivity("right_click_attempt");
     };
 
+    const handleBlur = () => {
+       // When window loses focus, blur the entire document to prevent background snipping tools
+       const docArea = document.getElementById('secure-document-area');
+       if (docArea) docArea.style.filter = "blur(15px) grayscale(100%) opacity(0.1)";
+    };
+
+    const handleFocus = () => {
+       const docArea = document.getElementById('secure-document-area');
+       if (docArea) docArea.style.filter = "none";
+    };
+
     window.addEventListener("keydown", handleKeydown);
+    window.addEventListener("keyup", handleKeyup);
+    window.addEventListener("blur", handleBlur);
+    window.addEventListener("focus", handleFocus);
     document.addEventListener("contextmenu", handleContextMenu);
 
     return () => {
       window.removeEventListener("keydown", handleKeydown);
+      window.removeEventListener("keyup", handleKeyup);
+      window.removeEventListener("blur", handleBlur);
+      window.removeEventListener("focus", handleFocus);
       document.removeEventListener("contextmenu", handleContextMenu);
     };
   }, [id]);
 
   if (loading) return (
-    <div className="min-h-screen bg-[#0a192f] flex flex-col items-center justify-center text-brand-500">
-      <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-brand-500 mb-4"></div>
+    <div className="min-h-screen bg-dark-bg flex flex-col items-center justify-center text-primary-400">
+      <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary-400 mb-4"></div>
       <p className="tracking-widest text-sm font-semibold uppercase">Securing Connection...</p>
     </div>
   );
 
   if (errorMessage) {
     return (
-      <div className="min-h-screen bg-[#0a192f] flex flex-col items-center justify-center p-4">
-        <div className="bg-[#112240] border border-[#233554] shadow-2xl p-8 flex flex-col items-center rounded-2xl max-w-md text-center relative overflow-hidden">
+      <div className="min-h-screen bg-dark-bg flex flex-col items-center justify-center p-4">
+        <div className="bg-dark-surface border border-dark-border shadow-2xl p-8 flex flex-col items-center rounded-2xl max-w-md text-center relative overflow-hidden">
           {errorType === "revoked" && (
             <div className="absolute top-0 left-0 w-full h-1 bg-red-500"></div>
           )}
@@ -155,7 +201,7 @@ export default function ViewDocument() {
   }
 
   return (
-    <div className="min-h-screen bg-[#0a192f] flex flex-col items-center justify-center p-4 selection:bg-transparent relative select-none">
+    <div className="min-h-screen bg-dark-bg flex flex-col items-center justify-center p-4 selection:bg-transparent relative select-none font-sans">
       {/* Alert Banner */}
       <div className="fixed top-0 left-0 w-full bg-red-900/90 text-red-100 px-4 py-2 text-center text-sm font-medium z-50 flex items-center justify-center gap-2 backdrop-blur-sm border-b border-red-800">
         <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -164,12 +210,12 @@ export default function ViewDocument() {
         Confidential Document. Screenshots are tracked and prohibited. Activity logged.
       </div>
 
-      <div className="max-w-4xl w-full bg-[#112240] border border-[#233554] rounded-xl shadow-2xl overflow-hidden mt-10">
+      <div className="max-w-4xl w-full bg-dark-surface border border-dark-border rounded-xl shadow-[0_10px_40px_rgba(79,41,144,0.15)] overflow-hidden mt-10">
         {/* Header */}
-        <div className="bg-[#0a192f] px-6 py-4 flex flex-col sm:flex-row justify-between items-start sm:items-center border-b border-[#233554] gap-2">
+        <div className="bg-dark-bg px-6 py-4 flex flex-col sm:flex-row justify-between items-start sm:items-center border-b border-dark-border gap-2">
           <div>
             <h2 className="text-xl font-bold tracking-tight text-white flex items-center gap-2">ShieldDocs Protected View</h2>
-            <p className="text-xs text-brand-400 mt-1 uppercase tracking-wider font-semibold">Shared exclusively with: {share?.receiver_name}</p>
+            <p className="text-xs text-primary-400 mt-1 uppercase tracking-wider font-semibold">Shared exclusively with: {share?.receiver_name}</p>
           </div>
           {share?.settings?.oneTimeView && (
              <div className="bg-orange-500/20 border border-orange-500/50 text-orange-400 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-widest animate-pulse">
@@ -179,11 +225,11 @@ export default function ViewDocument() {
         </div>
 
         {/* Document Area */}
-        <div className="p-4 sm:p-8 bg-[#020617] relative flex justify-center items-center min-h-[60vh] overflow-hidden">
+        <div id="secure-document-area" className="p-4 sm:p-8 bg-brand-950 flex justify-center items-center min-h-[60vh] relative overflow-hidden transition-all duration-200">
           {/* Dynamic Watermark Overlay */}
-          <div className="absolute inset-0 pointer-events-none z-10 overflow-hidden flex flex-col justify-center gap-16 rotate-[-25deg] opacity-[0.06]">
+          <div className="absolute inset-0 pointer-events-none z-10 overflow-hidden flex flex-col justify-center gap-16 rotate-[-25deg] opacity-[0.04]">
             {Array.from({ length: 12 }).map((_, i) => (
-              <div key={i} className="whitespace-nowrap text-3xl sm:text-4xl font-black text-brand-300 tracking-widest leading-loose">
+              <div key={i} className="whitespace-nowrap text-3xl sm:text-4xl font-black text-primary-300 tracking-widest leading-loose">
                 [CONFIDENTIAL] EXCLUSIVE TO {share?.receiver_name?.toUpperCase()} • {new Date(share?.created_at || Date.now()).toLocaleDateString()} • SHIELDDOCS •
               </div>
             ))}

@@ -94,9 +94,9 @@ export default function Layout() {
   };
 
   return (
-    <div className="min-h-screen bg-[#0a192f] text-gray-100 flex flex-col">
+    <div className="min-h-screen bg-dark-bg text-gray-100 flex flex-col font-sans">
       {/* Top Navbar Header */}
-      <header className="h-16 flex items-center justify-between px-4 sm:px-6 lg:px-8 bg-[#112240] backdrop-blur-md border-b border-[#233554] sticky top-0 z-40">
+      <header className="h-16 flex items-center justify-between px-4 sm:px-6 lg:px-8 bg-dark-surface backdrop-blur-md border-b border-dark-border sticky top-0 z-40">
         <div className="flex items-center gap-4">
           <button
             onClick={() => setSidebarOpen(true)}
@@ -190,14 +190,14 @@ export default function Layout() {
         {/* Sidebar Overlay */}
         {sidebarOpen && (
           <div 
-            className="fixed inset-0 bg-[#0a192f]/80 backdrop-blur-sm z-40 transition-opacity"
+            className="fixed inset-0 bg-dark-bg/80 backdrop-blur-sm z-40 transition-opacity"
             onClick={() => setSidebarOpen(false)}
           />
         )}
 
         {/* Sliding Sidebar */}
-        <div className={`fixed inset-y-0 left-0 z-50 w-64 bg-[#112240] border-r border-[#233554] transform transition-transform duration-300 ease-in-out flex flex-col ${sidebarOpen ? "translate-x-0" : "-translate-x-full"}`}>
-          <div className="h-16 flex items-center justify-between px-4 border-b border-[#233554]">
+        <div className={`fixed inset-y-0 left-0 z-50 w-64 bg-dark-surface border-r border-dark-border transform transition-transform duration-300 ease-in-out flex flex-col ${sidebarOpen ? "translate-x-0" : "-translate-x-full"}`}>
+          <div className="h-16 flex items-center justify-between px-4 border-b border-dark-border">
             <span className="font-bold text-xl tracking-tight text-white">Menu</span>
             <button onClick={() => setSidebarOpen(false)} className="p-2 text-gray-400 hover:text-white rounded-md">
               <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -212,12 +212,15 @@ export default function Layout() {
                 key={link.path}
                 to={link.path}
                 onClick={() => setSidebarOpen(false)}
-                className={`block px-4 py-3 rounded-lg text-sm font-medium transition-colors ${
+                className={`flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors ${
                   location.pathname === link.path 
-                    ? "bg-brand-500/15 text-brand-300 border border-brand-500/20" 
-                    : "text-gray-300 hover:bg-[#233554] hover:text-white"
+                    ? "bg-brand-500/20 text-primary-300 border border-brand-500/30 shadow-[0_0_15px_rgba(74,221,242,0.15)]" 
+                    : "text-gray-300 hover:bg-dark-border hover:text-white"
                 }`}
               >
+                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                </svg>
                 {link.name}
               </Link>
             ))}

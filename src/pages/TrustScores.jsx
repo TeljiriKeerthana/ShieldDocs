@@ -115,16 +115,16 @@ export default function TrustScores() {
       ) : (
         <>
           {/* Receiver Trust Scores */}
-          <div className="bg-[#112240] border border-[#233554] rounded-2xl shadow-xl overflow-hidden p-6 sm:p-8">
+          <div className="bg-dark-surface border border-dark-border rounded-2xl shadow-xl overflow-hidden p-6 sm:p-8">
             <h2 className="text-xl font-semibold text-white mb-6">Aggregate Receiver Reputation</h2>
             {receivers.length === 0 ? (
-              <div className="bg-[#0a192f] border border-[#233554]/50 border-dashed rounded-xl p-8 text-center">
+              <div className="bg-dark-bg border border-dark-border/50 border-dashed rounded-xl p-8 text-center">
                 <p className="text-gray-400">No receiver activity recorded yet.</p>
               </div>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {receivers.map((r, i) => (
-                  <div key={i} className="bg-[#0a192f] border border-[#233554] rounded-xl p-6 shadow-md hover:border-brand-500/30 transition-colors flex flex-col justify-between">
+                  <div key={i} className="bg-dark-bg border border-dark-border rounded-xl p-6 shadow-md hover:border-brand-500/30 transition-colors flex flex-col justify-between">
                     <div className="flex justify-between items-start mb-4">
                       <div>
                         <h3 className="text-lg font-bold text-white">{r.name}</h3>
@@ -148,8 +148,8 @@ export default function TrustScores() {
           </div>
 
           {/* Activity Log */}
-          <div className="bg-[#112240] border border-[#233554] rounded-2xl shadow-xl overflow-hidden">
-            <div className="p-6 sm:p-8 border-b border-[#233554]">
+          <div className="bg-dark-surface border border-dark-border rounded-2xl shadow-xl overflow-hidden">
+            <div className="p-6 sm:p-8 border-b border-dark-border">
                <h2 className="text-xl font-semibold text-white">Recent Activity Ledger</h2>
             </div>
             
@@ -158,20 +158,20 @@ export default function TrustScores() {
             ) : (
               <div className="overflow-x-auto">
                 <table className="w-full text-left text-sm text-gray-300">
-                  <thead className="text-xs text-gray-400 uppercase bg-[#0a192f] border-b border-[#233554]">
+                  <thead className="text-xs text-gray-400 uppercase bg-dark-bg border-b border-dark-border">
                     <tr>
                       <th className="px-6 py-4 font-bold tracking-wider">Receiver Identity</th>
                       <th className="px-6 py-4 font-bold tracking-wider">Logged Action</th>
                       <th className="px-6 py-4 font-bold tracking-wider text-right">Timestamp</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-[#233554]">
+                  <tbody className="divide-y divide-dark-border">
                     {activities.map((act) => (
                       <tr key={act.id} className="hover:bg-brand-500/5 transition-colors cursor-default">
                         <td className="px-6 py-4 whitespace-nowrap font-medium text-white">{act.receiver_name}</td>
                         <td className="px-6 py-4">
                           <span className={`inline-flex items-center px-2.5 py-1 rounded-md text-xs font-bold border ${
-                            act.action_type === 'view' ? 'bg-blue-500/10 text-blue-400 border-blue-500/20' : 
+                            act.action_type === 'view' ? 'bg-primary-500/10 text-primary-400 border-primary-500/20' : 
                             act.action_type.includes('expired') ? 'bg-orange-500/10 text-orange-400 border-orange-500/20' :
                             'bg-red-500/10 text-red-400 border-red-500/20'
                           }`}>

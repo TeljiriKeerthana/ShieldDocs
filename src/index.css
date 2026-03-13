@@ -1,17 +1,11 @@
+@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
   body {
-    @tailwind base;
-    @tailwind components;
-    @tailwind utilities;
-
-    @layer base {
-      body {
-        @apply bg-gray-900 text-gray-100 font-sans antialiased;
-      }
-    }
+    @apply bg-[#0d0b26] text-gray-100 font-sans antialiased;
   }
 }
