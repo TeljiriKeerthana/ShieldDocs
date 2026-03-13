@@ -1,5 +1,6 @@
 import { Link, Outlet, useLocation } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { supabase } from "../services/supabaseClient";
 
 export default function Layout() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -20,21 +21,76 @@ export default function Layout() {
   const [showNotifications, setShowNotifications] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
 
-  // Mocked notifications
-  const [notifications, setNotifications] = useState([
-    { id: 1, text: "Rahul Sharma tried to screenshot Doc 123", suspicious: true },
-  ]);
+  const [notifications, setNotifications] = useState([]);
 
-  const handleRevoke = (id) => {
-    setNotifications(prev => prev.filter(n => n.id !== id));
-    // Implementation would also revoke access in backend
-    alert("Access revoked for this user.");
+  useEffect(() => {
+    const fetchNotifications = async () => {
+      try {
+        const sessionData = localStorage.getItem("shielddocs_session");
+        if (!sessionData) return;
+        const userData = JSON.parse(sessionData);
+
+        const { data: myShares } = await supabase
+          .from("shares")
+          .select("id, receiver_name")
+          .eq("owner_id", userData.user.id)
+          .eq("status", "Active");
+
+        if (!myShares || myShares.length === 0) return;
+
+        const shareMap = myShares.reduce((acc, s) => ({...acc, [s.id]: s.receiver_name}), {});
+
+        const { data: acts } = await supabase
+          .from("share_activities")
+          .select()
+          .in("share_id", myShares.map(s => s.id))
+          .in("action_type", ['screenshot_attempt', 'copy_or_print_attempt', 'right_click_attempt'])
+          .order("created_at", { ascending: false });
+
+        if (acts) {
+          const ignoredIds = JSON.parse(localStorage.getItem("ignored_notifications") || "[]");
+          const newNotifs = acts
+             .filter(a => !ignoredIds.includes(a.id))
+             .map(a => ({
+                id: a.id,
+                share_id: a.share_id,
+                text: `${shareMap[a.share_id] || 'Someone'} attempted a ${a.action_type.replace('_attempt', '').replace(/_/g, ' ')}!`,
+                suspicious: true
+             }));
+          setNotifications(newNotifs);
+        }
+      } catch (err) {
+        console.error("Failed to fetch notifications:", err);
+      }
+    };
+
+    fetchNotifications();
+    const interval = setInterval(fetchNotifications, 10000); // Poll every 10s
+    return () => clearInterval(interval);
+  }, []);
+
+  const handleRevoke = async (notif) => {
+    try {
+      await supabase.from("shares").update({ status: 'Revoked' }).eq("id", notif.share_id);
+      
+      const ignoredIds = JSON.parse(localStorage.getItem("ignored_notifications") || "[]");
+      ignoredIds.push(notif.id);
+      localStorage.setItem("ignored_notifications", JSON.stringify(ignoredIds));
+      
+      setNotifications(prev => prev.filter(n => n.id !== notif.id));
+      alert("Access revoked successfully for this user.");
+    } catch (err) {
+      console.error(err);
+      alert("Failed to revoke access.");
+    }
   };
 
-  const handleIgnore = (id) => {
-    setNotifications(prev => prev.filter(n => n.id !== id));
-    // Implementation would reduce trust score in backend
-    alert("Ignored. Trust score reduced.");
+  const handleIgnore = (notif) => {
+    const ignoredIds = JSON.parse(localStorage.getItem("ignored_notifications") || "[]");
+    ignoredIds.push(notif.id);
+    localStorage.setItem("ignored_notifications", JSON.stringify(ignoredIds));
+    
+    setNotifications(prev => prev.filter(n => n.id !== notif.id));
   };
 
   return (
@@ -91,8 +147,8 @@ export default function Layout() {
                       <div key={n.id} className="px-4 py-3 border-b border-[#334155]/50 hover:bg-[#233554] transition-colors">
                         <p className="text-sm text-gray-200 mb-2 font-medium">{n.text}</p>
                         <div className="flex gap-2">
-                          <button onClick={() => handleRevoke(n.id)} className="text-xs bg-red-500/20 hover:bg-red-500/30 text-red-400 border border-red-500/30 px-2.5 py-1.5 rounded-md transition-colors font-medium">Revoke Access</button>
-                          <button onClick={() => handleIgnore(n.id)} className="text-xs bg-gray-700 hover:bg-gray-600 text-gray-300 px-2.5 py-1.5 rounded-md transition-colors">Ignore</button>
+                          <button onClick={() => handleRevoke(n)} className="text-xs bg-red-500/20 hover:bg-red-500/30 text-red-400 border border-red-500/30 px-2.5 py-1.5 rounded-md transition-colors font-medium">Revoke Access</button>
+                          <button onClick={() => handleIgnore(n)} className="text-xs bg-gray-700 hover:bg-gray-600 text-gray-300 px-2.5 py-1.5 rounded-md transition-colors">Ignore</button>
                         </div>
                       </div>
                     ))
