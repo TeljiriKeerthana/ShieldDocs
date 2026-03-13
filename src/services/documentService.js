@@ -9,7 +9,7 @@ export const uploadDocument = async (file) => {
   const fileName = `${userId}-${Date.now()}-${file.name}`
 
   const { data, error } = await supabase.storage
-    .from("documents")
+    .from("DOCUMENTS")
     .upload(fileName, file)
 
   if (error) {
@@ -18,7 +18,7 @@ export const uploadDocument = async (file) => {
   }
 
   const { data: urlData } = supabase.storage
-    .from("documents")
+    .from("DOCUMENTS")
     .getPublicUrl(fileName)
 
   const { error: dbError } = await supabase

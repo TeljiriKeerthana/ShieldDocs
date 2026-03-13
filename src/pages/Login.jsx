@@ -25,11 +25,19 @@ export default function Login() {
     }
     setError("");
     setLoading(true);
-    // Simulate API delay
-    setTimeout(() => {
-      setLoading(false);
+
+    try {
+      const { error } = await supabase.auth.signInWithOtp({
+        phone: '+91' + phone,
+      });
+
+      if (error) throw error;
       setStep(2);
-    }, 1000);
+    } catch (err) {
+      setError(err.message || "Failed to send OTP.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleVerifyOTP = async (e) => {
@@ -42,32 +50,39 @@ export default function Login() {
     setLoading(true);
 
     try {
-      // Simulate verification delay
-      await new Promise(r => setTimeout(r, 800));
+      const { data, error } = await supabase.auth.verifyOtp({
+        phone: '+91' + phone,
+        token: otp,
+        type: 'sms'
+      });
       
-      // HACKATHON BYPASS: Since Supabase Email Auth has rate limits and requirements,
-      // we bypass it completely for the frontend demo by mocking a session locally.
-      // We will pretend the user is authenticated with a dummy UUID.
-      const hackathonUserId = "00000000-0000-0000-0000-000000000000"; // Fixed UUID for demo
+      if (error) throw error;
       
-      localStorage.setItem("shielddocs_session", JSON.stringify({
-        user: { id: hackathonUserId, phone },
-        access_token: "mock-token-for-demo"
-      }));
+      // Maintain backwards compatibility with the app's custom local storage session
+      if (data.session) {
+        localStorage.setItem("shielddocs_session", JSON.stringify({
+          user: { id: data.user.id, phone: data.user.phone },
+          access_token: data.session.access_token,
+          supabase_session: data.session
+        }));
+      }
 
       navigate("/");
     } catch (err) {
-      setError("Authentication failed.");
+      setError(err.message || "Authentication failed.");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-gray-950 flex flex-col justify-center items-center p-4">
-      <div className="w-full max-w-md bg-gray-900 border border-gray-800 rounded-2xl shadow-xl overflow-hidden p-8">
-        <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-brand-500/10 text-brand-500 mb-4">
+    <div className="min-h-screen bg-[#0a192f] flex flex-col justify-center items-center p-4">
+      <div className="w-full max-w-md bg-[#112240] border border-[#233554] rounded-2xl shadow-xl overflow-hidden p-8 relative">
+        {/* Background glow effect */}
+        <div className="absolute -top-24 -left-24 w-48 h-48 bg-brand-500/20 rounded-full blur-3xl"></div>
+        
+        <div className="text-center mb-8 relative z-10">
+          <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-brand-500/10 border border-brand-500/20 text-brand-400 mb-4 shadow-lg shadow-brand-500/10">
             <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
             </svg>
@@ -81,15 +96,15 @@ export default function Login() {
         </div>
 
         {error && (
-          <div className="mb-4 p-4 text-sm bg-red-500/10 border border-red-500/20 text-red-500 rounded-xl">
+          <div className="mb-4 p-4 text-sm bg-red-500/10 border border-red-500/20 text-red-500 rounded-xl relative z-10">
             {error}
           </div>
         )}
 
         {step === 1 ? (
-          <form onSubmit={handleSendOTP} className="space-y-6">
+          <form onSubmit={handleSendOTP} className="space-y-6 relative z-10">
             <div>
-              <label htmlFor="phone" className="block text-sm font-medium text-gray-400 mb-2">
+              <label htmlFor="phone" className="block text-sm font-medium text-gray-300 mb-2">
                 Mobile Number
               </label>
               <div className="relative">
@@ -100,7 +115,7 @@ export default function Login() {
                   id="phone"
                   type="tel"
                   placeholder="Enter 10 digit number"
-                  className="block w-full pl-12 pr-4 py-3 bg-gray-800 border-gray-700 rounded-xl text-white placeholder-gray-500 focus:ring-brand-500 focus:border-brand-500 transition-colors"
+                  className="block w-full pl-12 pr-4 py-3 bg-[#0a192f] border border-[#233554] rounded-xl text-white placeholder-gray-500 focus:ring-brand-500 focus:border-brand-500 transition-colors shadow-inner"
                   value={phone}
                   onChange={(e) => setPhone(e.target.value.replace(/\D/g, "").slice(0, 10))}
                   required
@@ -110,42 +125,42 @@ export default function Login() {
             <button
               type="submit"
               disabled={loading || phone.length !== 10}
-              className="w-full py-3 px-4 flex justify-center text-sm font-semibold rounded-xl text-white bg-emerald-500 hover:bg-emerald-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+              className="w-full py-3.5 px-4 flex justify-center text-sm font-bold rounded-xl text-white bg-brand-600 hover:bg-brand-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-[#0a192f] focus:ring-brand-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-lg shadow-brand-500/20"
             >
-              {loading ? "Sending..." : "Send OTP"}
+              {loading ? "Sending..." : "Send Verification Code"}
             </button>
             <p className="text-center text-sm text-gray-500">
-              For testing, enter any 10-digit number.
+              Make sure you enter a valid mobile number for verification.
             </p>
           </form>
         ) : (
-          <form onSubmit={handleVerifyOTP} className="space-y-6">
+          <form onSubmit={handleVerifyOTP} className="space-y-6 relative z-10">
             <div>
-              <label htmlFor="otp" className="block text-sm font-medium text-gray-400 mb-2">
+              <label htmlFor="otp" className="block text-sm font-medium text-gray-300 mb-2">
                 Enter OTP
               </label>
               <input
                 id="otp"
                 type="text"
                 placeholder="e.g. 1234"
-                className="block w-full px-4 py-3 bg-gray-800 border-gray-700 rounded-xl text-white text-center tracking-widest text-xl placeholder-gray-500 focus:ring-brand-500 focus:border-brand-500 transition-colors"
+                className="block w-full px-4 py-3 bg-[#0a192f] border border-[#233554] rounded-xl text-white text-center tracking-widest text-xl placeholder-gray-600 focus:ring-brand-500 focus:border-brand-500 transition-colors shadow-inner font-mono"
                 value={otp}
                 onChange={(e) => setOtp(e.target.value.replace(/\D/g, "").slice(0, 6))}
                 required
               />
-              <p className="text-xs text-center text-gray-500 mt-2">
-                Sent to +91 {phone} · <button type="button" onClick={() => setStep(1)} className="text-emerald-500 hover:text-emerald-400">Edit</button>
+              <p className="text-xs text-center text-gray-400 mt-3">
+                Sent to +91 {phone} · <button type="button" onClick={() => setStep(1)} className="text-brand-400 hover:text-brand-300 font-medium transition-colors">Edit Number</button>
               </p>
             </div>
             <button
               type="submit"
               disabled={loading || otp.length < 4}
-              className="w-full py-3 px-4 flex justify-center text-sm font-semibold rounded-xl text-white bg-emerald-500 hover:bg-emerald-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-emerald-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+              className="w-full py-3.5 px-4 flex justify-center text-sm font-bold rounded-xl text-white bg-brand-600 hover:bg-brand-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-[#0a192f] focus:ring-brand-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-lg shadow-brand-500/20"
             >
-              {loading ? "Verifying..." : "Verify & Continue"}
+              {loading ? "Verifying..." : "Verify & Secure Login"}
             </button>
             <p className="text-center text-sm text-gray-500">
-              For testing, enter any OTP.
+              Check your mobile device for the OTP.
             </p>
           </form>
         )}

@@ -34,9 +34,9 @@ export default {
           950: '#172554',
         },
         dark: {
-          bg: '#0b1120',
-          surface: '#1e293b',
-          border: '#334155',
+          bg: '#0a192f',
+          surface: '#112240',
+          border: '#233554',
         }
       },
       fontFamily: {

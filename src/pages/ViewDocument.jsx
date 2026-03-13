@@ -5,7 +5,8 @@ import { supabase } from "../services/supabaseClient";
 export default function ViewDocument() {
   const { id } = useParams();
   const [share, setShare] = useState(null);
-  const [error, setError] = useState("");
+  const [errorType, setErrorType] = useState(""); // "revoked", "expired", "invalid"
+  const [errorMessage, setErrorMessage] = useState("");
   const [loading, setLoading] = useState(true);
 
   const logActivity = async (actionType) => {
@@ -27,14 +28,45 @@ export default function ViewDocument() {
           .eq("id", id)
           .single();
 
-        if (error || !data) throw new Error("Share link invalid or expired");
-        if (data.status !== 'Active') throw new Error("This share link has been revoked");
+        if (error || !data) {
+          setErrorType("invalid");
+          throw new Error("This secure link is invalid or does not exist.");
+        }
+        
+        if (data.status === 'Revoked') {
+          setErrorType("revoked");
+          throw new Error("Access Revoked by Owner");
+        }
+        
+        if (data.status !== 'Active') {
+           setErrorType("invalid");
+           throw new Error("This share link is no longer active.");
+        }
+
+        // Check explicit time expiry
+        if (data.settings?.expiryType === "specific" && data.settings?.expiryHours) {
+          const createdTime = new Date(data.created_at).getTime();
+          const expireTime = createdTime + (data.settings.expiryHours * 60 * 60 * 1000);
+          if (Date.now() > expireTime) {
+             setErrorType("expired");
+             // Log expiry attempt
+             logActivity("access_expired_attempt");
+             throw new Error("This secure link has expired based on the owner's time constraints.");
+          }
+        }
+
+        // One time view logic
+        if (data.settings?.oneTimeView) {
+           // We would typically check if it was viewed before, but for this MVP 
+           // we just log it, and maybe auto-revoke after first view.
+           // Setting status to 'Revoked' immediately after fetching so it can't be used again
+           await supabase.from("shares").update({ status: 'Revoked' }).eq("id", id);
+        }
 
         setShare(data);
-        // Log view
         logActivity("view");
       } catch (err) {
-        setError(err.message);
+        setErrorMessage(err.message);
       } finally {
         setLoading(false);
       }
@@ -44,19 +76,20 @@ export default function ViewDocument() {
     
     // Security Listeners
     const handleKeydown = (e) => {
+      // Basic anti-ss checks (PrntScrn, Ctrl+C, Ctrl+P)
       if (e.key === "PrintScreen" || (e.ctrlKey && e.key === "c") || (e.metaKey && e.key === "c") || (e.ctrlKey && e.key === "p") || (e.metaKey && e.key === "p")) {
         e.preventDefault();
         alert("⚠ Action tracking: Security policy violation detected!");
         logActivity(e.key === "PrintScreen" ? "screenshot_attempt" : "copy_or_print_attempt");
       }
     };
-    window.addEventListener("keydown", handleKeydown);
-    
-    // Prevent context menu
+
     const handleContextMenu = (e) => {
       e.preventDefault();
       logActivity("right_click_attempt");
     };
+
+    window.addEventListener("keydown", handleKeydown);
     document.addEventListener("contextmenu", handleContextMenu);
 
     return () => {
@@ -65,67 +98,137 @@ export default function ViewDocument() {
     };
   }, [id]);
 
-  if (loading) return <div className="min-h-screen bg-gray-950 flex items-center justify-center text-white">Loading secure document...</div>;
-
-  if (error) return (
-    <div className="min-h-screen bg-gray-950 flex flex-col items-center justify-center p-4">
-      <div className="bg-red-900/20 border border-red-500/50 text-red-400 p-6 flex flex-col items-center rounded-xl max-w-md text-center">
-        <svg className="w-12 h-12 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-        </svg>
-        <h2 className="text-xl font-bold mb-2">Access Denied</h2>
-        <p>{error}</p>
-      </div>
+  if (loading) return (
+    <div className="min-h-screen bg-[#0a192f] flex flex-col items-center justify-center text-brand-500">
+      <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-brand-500 mb-4"></div>
+      <p className="tracking-widest text-sm font-semibold uppercase">Securing Connection...</p>
     </div>
   );
 
+  if (errorMessage) {
+    return (
+      <div className="min-h-screen bg-[#0a192f] flex flex-col items-center justify-center p-4">
+        <div className="bg-[#112240] border border-[#233554] shadow-2xl p-8 flex flex-col items-center rounded-2xl max-w-md text-center relative overflow-hidden">
+          {errorType === "revoked" && (
+            <div className="absolute top-0 left-0 w-full h-1 bg-red-500"></div>
+          )}
+          {errorType === "expired" && (
+            <div className="absolute top-0 left-0 w-full h-1 bg-orange-500"></div>
+          )}
+          
+          <div className={`w-16 h-16 rounded-full flex items-center justify-center mb-6 shadow-lg ${
+            errorType === "revoked" ? "bg-red-500/10 text-red-500 shadow-red-500/20" : 
+            errorType === "expired" ? "bg-orange-500/10 text-orange-400 shadow-orange-500/20" : 
+            "bg-gray-800 text-gray-400"
+          }`}>
+            {errorType === "revoked" ? (
+              <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+              </svg>
+            ) : errorType === "expired" ? (
+              <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            ) : (
+              <svg className="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            )}
+          </div>
+          
+          <h2 className="text-2xl font-bold text-white mb-2">
+            {errorType === "revoked" ? "Access Revoked" : 
+             errorType === "expired" ? "Link Expired" : "Access Denied"}
+          </h2>
+          <p className="text-gray-400 mb-6">
+            {errorMessage}
+          </p>
+          
+          {errorType === "revoked" && (
+             <div className="bg-red-500/10 border border-red-500/20 rounded-lg p-4 text-xs tracking-wide text-red-400 font-medium">
+               The document owner manually revoked the permissions for this specific share explicitly. You can no longer view the contents.
+             </div>
+          )}
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className="min-h-screen bg-gray-950 flex flex-col items-center justify-center p-4 selection:bg-transparent relative select-none">
+    <div className="min-h-screen bg-[#0a192f] flex flex-col items-center justify-center p-4 selection:bg-transparent relative select-none">
       {/* Alert Banner */}
       <div className="fixed top-0 left-0 w-full bg-red-900/90 text-red-100 px-4 py-2 text-center text-sm font-medium z-50 flex items-center justify-center gap-2 backdrop-blur-sm border-b border-red-800">
-        Confidential Document. Screenshots are tracked and prohibited.
+        <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+        </svg>
+        Confidential Document. Screenshots are tracked and prohibited. Activity logged.
       </div>
 
-      <div className="max-w-4xl w-full bg-slate-900 border border-slate-700 rounded-lg shadow-2xl overflow-hidden mt-10">
+      <div className="max-w-4xl w-full bg-[#112240] border border-[#233554] rounded-xl shadow-2xl overflow-hidden mt-10">
         {/* Header */}
-        <div className="bg-slate-800 px-6 py-4 flex justify-between items-center border-b border-slate-700">
+        <div className="bg-[#0a192f] px-6 py-4 flex flex-col sm:flex-row justify-between items-start sm:items-center border-b border-[#233554] gap-2">
           <div>
-            <h2 className="text-xl font-bold tracking-tight text-white flex items-center gap-2">Secure Document Viewer</h2>
-            <p className="text-xs text-emerald-400 mt-1 uppercase tracking-wider font-semibold">Protected View • Shared with: {share?.receiver_name}</p>
+            <h2 className="text-xl font-bold tracking-tight text-white flex items-center gap-2">ShieldDocs Protected View</h2>
+            <p className="text-xs text-brand-400 mt-1 uppercase tracking-wider font-semibold">Shared exclusively with: {share?.receiver_name}</p>
           </div>
+          {share?.settings?.oneTimeView && (
+             <div className="bg-orange-500/20 border border-orange-500/50 text-orange-400 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-widest animate-pulse">
+                One-Time View Active
+             </div>
+          )}
         </div>
 
         {/* Document Area */}
-        <div className="p-8 bg-gray-900 relative flex justify-center items-center min-h-[60vh] overflow-hidden">
+        <div className="p-4 sm:p-8 bg-[#020617] relative flex justify-center items-center min-h-[60vh] overflow-hidden">
           {/* Dynamic Watermark Overlay */}
-          <div className="absolute inset-0 pointer-events-none z-10 overflow-hidden flex flex-col justify-center gap-12 rotate-[-25deg] opacity-[0.05]">
+          <div className="absolute inset-0 pointer-events-none z-10 overflow-hidden flex flex-col justify-center gap-16 rotate-[-25deg] opacity-[0.06]">
             {Array.from({ length: 12 }).map((_, i) => (
-              <div key={i} className="whitespace-nowrap text-3xl font-bold text-white tracking-widest leading-loose">
-                CONFIDENTIAL • SHARED WITH: {share?.receiver_name?.toUpperCase()} • {new Date().toLocaleDateString()} • SHIELDDOCS • DO NOT COPY •
+              <div key={i} className="whitespace-nowrap text-3xl sm:text-4xl font-black text-brand-300 tracking-widest leading-loose">
+                [CONFIDENTIAL] EXCLUSIVE TO {share?.receiver_name?.toUpperCase()} • {new Date(share?.created_at || Date.now()).toLocaleDateString()} • SHIELDDOCS •
               </div>
             ))}
           </div>
           
           {/* Document Content */}
-          <div className="relative z-0 shadow-lg border border-slate-700 bg-white rounded-sm overflow-hidden p-2 w-full flex justify-center">
+          <div className="relative z-0 shadow-2xl border border-gray-800 bg-white rounded-md overflow-hidden p-2 flex justify-center max-w-full">
             {share?.settings?.file_type?.includes('pdf') ? (
-              <div className="relative w-full">
+              <div className="relative w-full h-[600px] min-w-[300px] sm:min-w-[500px]">
                 {/* Overlay to prevent interaction/right click on iframe */}
-                <div className="absolute inset-0 z-20"></div>
-                <iframe src={`${share?.settings?.file_url}#toolbar=0`} className="w-full h-[600px] border-0" />
+                <div className="absolute inset-0 z-20" onContextMenu={(e) => e.preventDefault()}></div>
+                <iframe src={`${share?.settings?.file_url}#toolbar=0`} className="w-full h-full border-0 pointer-events-none" title="Secure PDF View"/>
               </div>
             ) : (
-               <img
-                 src={share?.settings?.file_url}
-                 alt="Secured Document"
-                 className="max-w-full h-auto object-contain max-h-[70vh] select-none"
-                 style={{ WebkitUserDrag: 'none' }}
-                 onError={(e) => { e.target.src = "https://placehold.co/600x400/1e293b/ffffff?text=Document+Not+Found" }}
-               />
+               <div className="relative w-full">
+                 <img
+                   src={share?.settings?.file_url}
+                   alt="Secured Document"
+                   crossOrigin="anonymous"
+                   className="max-w-full h-auto object-contain max-h-[75vh] select-none pointer-events-none"
+                   style={{ WebkitUserDrag: 'none' }}
+                   onError={(e) => { e.target.src = "https://placehold.co/600x400/1e293b/ffffff?text=Document+Not+Found" }}
+                   onContextMenu={(e) => e.preventDefault()}
+                 />
+                 
+                 {/* Render Masked Areas */}
+                 {share?.settings?.maskedAreas && share.settings.maskedAreas.map((mask, idx) => (
+                    <div 
+                      key={idx}
+                      className="absolute bg-gray-900 border-2 border-dashed border-gray-600 z-10 flex justify-center items-center overflow-hidden"
+                      style={{
+                        left: `${mask.x}%`, top: `${mask.y}%`, 
+                        width: `${mask.w}%`, height: `${mask.h}%`
+                      }}
+                    >
+                      <span className="text-gray-500 font-mono text-[10px] sm:text-xs font-black tracking-[0.3em] uppercase opacity-50">REDACTED</span>
+                    </div>
+                 ))}
+               </div>
             )}
           </div>
         </div>
       </div>
+      
+      <p className="text-gray-500 text-xs mt-8">Secured by ShieldDocs Architecture</p>
     </div>
   );
 }
