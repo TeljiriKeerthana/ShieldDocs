@@ -24,7 +24,7 @@ export default {
           50: '#e0fbff',
           100: '#bdf7ff',
           200: '#8cf3ff',
-          300: '#4addf2', /* main cyan */
+          300: '#45edf2', /* main cyan */
           400: '#26c5db',
           500: '#0ea4bc',
           600: '#08829a',

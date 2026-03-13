@@ -248,7 +248,6 @@ export default function ViewDocument() {
                  <img
                    src={share?.settings?.file_url}
                    alt="Secured Document"
-                   crossOrigin="anonymous"
                    className="max-w-full h-auto object-contain max-h-[75vh] select-none pointer-events-none"
                    style={{ WebkitUserDrag: 'none' }}
                    onError={(e) => { e.target.src = "https://placehold.co/600x400/1e293b/ffffff?text=Document+Not+Found" }}
