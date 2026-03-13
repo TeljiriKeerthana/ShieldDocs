@@ -6,6 +6,6 @@
 
 @layer base {
   body {
-    @apply bg-[#0d0b26] text-gray-100 font-sans antialiased;
+    @apply bg-dark-bg text-gray-100 font-sans antialiased;
   }
 }

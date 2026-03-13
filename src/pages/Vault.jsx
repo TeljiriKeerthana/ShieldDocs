@@ -57,7 +57,7 @@ export default function Vault(){
 
 
 
-      <div className="bg-[#112240] border border-[#233554] rounded-xl p-6 shadow-xl">
+      <div className="bg-dark-surface border border-dark-border rounded-xl p-6 shadow-xl">
         <h2 className="text-lg font-semibold text-white mb-4">Upload New Document</h2>
         <UploadBox onUploadSuccess={loadDocs} />
       </div>
@@ -72,7 +72,7 @@ export default function Vault(){
           </div>
           <div className="space-y-3">
             {recentAlerts.map(alert => (
-              <div key={alert.id} className="flex items-center justify-between bg-[#0a192f]/50 border border-red-500/10 rounded-lg p-3">
+              <div key={alert.id} className="flex items-center justify-between bg-dark-bg/50 border border-red-500/10 rounded-lg p-3">
                 <div className="flex items-center gap-3">
                   <span className="w-2 h-2 rounded-full bg-red-500 animate-pulse"></span>
                   <div>
@@ -80,7 +80,7 @@ export default function Vault(){
                     <p className="text-gray-400 text-xs">{new Date(alert.created_at).toLocaleString()}</p>
                   </div>
                 </div>
-                <Link to="/activity" className="text-xs bg-[#112240] hover:bg-[#233554] border border-[#233554] px-3 py-1.5 rounded-md text-white transition-colors">
+                <Link to="/activity" className="text-xs bg-dark-surface hover:bg-dark-border border border-dark-border px-3 py-1.5 rounded-md text-white transition-colors">
                   Investigate
                 </Link>
               </div>
@@ -99,7 +99,7 @@ export default function Vault(){
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-brand-500"></div>
           </div>
         ) : docs.length === 0 ? (
-          <div className="text-center py-16 bg-[#112240]/50 border border-[#233554] border-dashed rounded-xl">
+          <div className="text-center py-16 bg-dark-surface/50 border border-dark-border border-dashed rounded-xl">
             <svg className="mx-auto h-12 w-12 text-gray-500 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1" d="M9 13h6m-3-3v6m5 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
             </svg>
@@ -109,7 +109,7 @@ export default function Vault(){
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {docs.map(doc=>(
-              <div key={doc.id} className="group flex flex-col justify-between bg-[#112240] hover:bg-[#112240]/80 border border-[#233554] hover:border-brand-500/50 rounded-xl p-5 shadow-sm transition-all">
+              <div key={doc.id} className="group flex flex-col justify-between bg-dark-surface hover:bg-dark-surface/80 border border-dark-border hover:border-brand-500/50 rounded-xl p-5 shadow-sm transition-all">
                 <div className="flex items-start gap-4">
                   <div className="p-3 bg-brand-500/10 rounded-lg text-brand-400 group-hover:bg-brand-500/20 transition-colors">
                     <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
@@ -122,7 +122,7 @@ export default function Vault(){
                   </div>
                 </div>
                 <div className="mt-6 flex gap-3 w-full">
-                  <a href={doc.file_url} target="_blank" rel="noopener noreferrer" className="flex-1 text-center px-3 py-2 bg-[#233554] hover:bg-gray-700 text-sm font-medium text-white rounded-lg transition-colors flex items-center justify-center">
+                  <a href={doc.file_url} target="_blank" rel="noopener noreferrer" className="flex-1 text-center px-3 py-2 bg-dark-border hover:bg-gray-700 text-sm font-medium text-white rounded-lg transition-colors flex items-center justify-center">
                     View
                   </a>
                   <Link to={`/share?doc=${doc.id}`} className="flex-1 text-center px-3 py-2 bg-brand-600 hover:bg-brand-500 text-white text-sm font-medium rounded-lg shadow shadow-brand-500/20 transition-all">

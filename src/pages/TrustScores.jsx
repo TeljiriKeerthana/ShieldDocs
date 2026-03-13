@@ -135,7 +135,7 @@ export default function TrustScores() {
                       </div>
                     </div>
                     {/* Progress Bar */}
-                    <div className="w-full bg-[#1e293b] rounded-full h-2.5 mt-2 shadow-inner overflow-hidden border border-gray-800">
+                    <div className="w-full bg-dark-surface rounded-full h-2.5 mt-2 shadow-inner overflow-hidden border border-gray-800">
                        <div 
                          className={`h-full rounded-none transition-all duration-1000 ${r.score >= 70 ? 'bg-emerald-500' : 'bg-red-500'}`} 
                          style={{ width: `${Math.max(0, Math.min(100, r.score))}%` }}

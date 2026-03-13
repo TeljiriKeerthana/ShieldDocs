@@ -76,8 +76,8 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen bg-[#0a192f] flex flex-col justify-center items-center p-4">
-      <div className="w-full max-w-md bg-[#112240] border border-[#233554] rounded-2xl shadow-xl overflow-hidden p-8 relative">
+    <div className="min-h-screen bg-dark-bg flex flex-col justify-center items-center p-4">
+      <div className="w-full max-w-md bg-dark-surface border border-dark-border rounded-2xl shadow-xl overflow-hidden p-8 relative">
         {/* Background glow effect */}
         <div className="absolute -top-24 -left-24 w-48 h-48 bg-brand-500/20 rounded-full blur-3xl"></div>
         
@@ -115,7 +115,7 @@ export default function Login() {
                   id="phone"
                   type="tel"
                   placeholder="Enter 10 digit number"
-                  className="block w-full pl-12 pr-4 py-3 bg-[#0a192f] border border-[#233554] rounded-xl text-white placeholder-gray-500 focus:ring-brand-500 focus:border-brand-500 transition-colors shadow-inner"
+                  className="block w-full pl-12 pr-4 py-3 bg-dark-bg border border-dark-border rounded-xl text-white placeholder-gray-500 focus:ring-brand-500 focus:border-brand-500 transition-colors shadow-inner"
                   value={phone}
                   onChange={(e) => setPhone(e.target.value.replace(/\D/g, "").slice(0, 10))}
                   required
@@ -125,7 +125,7 @@ export default function Login() {
             <button
               type="submit"
               disabled={loading || phone.length !== 10}
-              className="w-full py-3.5 px-4 flex justify-center text-sm font-bold rounded-xl text-white bg-brand-600 hover:bg-brand-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-[#0a192f] focus:ring-brand-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-lg shadow-brand-500/20"
+              className="w-full py-3.5 px-4 flex justify-center text-sm font-bold rounded-xl text-white bg-brand-600 hover:bg-brand-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-dark-bg focus:ring-brand-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-lg shadow-brand-500/20"
             >
               {loading ? "Sending..." : "Send Verification Code"}
             </button>
@@ -143,7 +143,7 @@ export default function Login() {
                 id="otp"
                 type="text"
                 placeholder="e.g. 1234"
-                className="block w-full px-4 py-3 bg-[#0a192f] border border-[#233554] rounded-xl text-white text-center tracking-widest text-xl placeholder-gray-600 focus:ring-brand-500 focus:border-brand-500 transition-colors shadow-inner font-mono"
+                className="block w-full px-4 py-3 bg-dark-bg border border-dark-border rounded-xl text-white text-center tracking-widest text-xl placeholder-gray-600 focus:ring-brand-500 focus:border-brand-500 transition-colors shadow-inner font-mono"
                 value={otp}
                 onChange={(e) => setOtp(e.target.value.replace(/\D/g, "").slice(0, 6))}
                 required
@@ -155,7 +155,7 @@ export default function Login() {
             <button
               type="submit"
               disabled={loading || otp.length < 4}
-              className="w-full py-3.5 px-4 flex justify-center text-sm font-bold rounded-xl text-white bg-brand-600 hover:bg-brand-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-[#0a192f] focus:ring-brand-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-lg shadow-brand-500/20"
+              className="w-full py-3.5 px-4 flex justify-center text-sm font-bold rounded-xl text-white bg-brand-600 hover:bg-brand-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-dark-bg focus:ring-brand-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-lg shadow-brand-500/20"
             >
               {loading ? "Verifying..." : "Verify & Secure Login"}
             </button>

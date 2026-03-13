@@ -117,7 +117,7 @@ export default function CreateShare(){
         <p className="text-gray-400">Configure robust access controls, apply data masking, and generate links.</p>
       </div>
 
-      <div className="bg-[#112240] border border-[#233554] rounded-2xl shadow-xl overflow-hidden text-left">
+      <div className="bg-dark-surface border border-dark-border rounded-2xl shadow-xl overflow-hidden text-left">
         <div className="p-6 md:p-8 space-y-8">
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -128,7 +128,7 @@ export default function CreateShare(){
                 <select
                   value={docId}
                   onChange={(e) => setDocId(e.target.value)}
-                  className="w-full bg-[#0a192f] border border-[#233554] rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition-colors shadow-inner"
+                  className="w-full bg-dark-bg border border-dark-border rounded-xl px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition-colors shadow-inner"
                 >
                   <option value="" disabled>Choose a document from Vault</option>
                   {docs.map(d => (
@@ -147,7 +147,7 @@ export default function CreateShare(){
                     placeholder="e.g. Acme Corp Compliance"
                     value={receiver}
                     onChange={(e) => setReceiver(e.target.value)}
-                    className="w-full bg-[#0a192f] border border-[#233554] rounded-xl px-4 py-3 pr-24 text-white focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition-colors shadow-inner"
+                    className="w-full bg-dark-bg border border-dark-border rounded-xl px-4 py-3 pr-24 text-white focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 transition-colors shadow-inner"
                   />
                   {receiverScore !== null && (
                     <div className={`absolute right-3 top-1/2 -translate-y-1/2 text-xs font-bold px-2.5 py-1 rounded-md ${
@@ -162,7 +162,7 @@ export default function CreateShare(){
               </div>
 
               {/* Security Controls */}
-              <div className="pt-4 border-t border-[#233554]">
+              <div className="pt-4 border-t border-dark-border">
                 <h3 className="text-base font-bold text-gray-200 mb-4 flex items-center gap-2">
                   <svg className="w-5 h-5 text-brand-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
@@ -170,24 +170,24 @@ export default function CreateShare(){
                   Access Constraints
                 </h3>
                 <div className="space-y-3">
-                  <label className="flex items-center p-3.5 border border-[#233554] rounded-xl bg-[#0a192f] cursor-pointer hover:border-brand-500/50 transition-colors">
-                    <input type="checkbox" checked={settings.antiScreenshot} onChange={() => toggleSetting('antiScreenshot')} className="w-4 h-4 text-brand-600 rounded border-gray-600 focus:ring-brand-500 bg-[#1e293b]" />
+                  <label className="flex items-center p-3.5 border border-dark-border rounded-xl bg-dark-bg cursor-pointer hover:border-brand-500/50 transition-colors">
+                    <input type="checkbox" checked={settings.antiScreenshot} onChange={() => toggleSetting('antiScreenshot')} className="w-4 h-4 text-brand-600 rounded border-gray-600 focus:ring-brand-500 bg-dark-surface" />
                     <div className="ml-3 flex-1">
                       <span className="block text-sm font-medium text-white">Strict Anti-Screenshot</span>
                       <span className="block text-xs text-gray-400">Blocks screen capture combinations.</span>
                     </div>
                   </label>
                   
-                  <label className="flex items-center p-3.5 border border-[#233554] rounded-xl bg-[#0a192f] cursor-pointer hover:border-brand-500/50 transition-colors">
-                    <input type="checkbox" checked={settings.preventDownload} onChange={() => toggleSetting('preventDownload')} className="w-4 h-4 text-brand-600 rounded border-gray-600 focus:ring-brand-500 bg-[#1e293b]" />
+                  <label className="flex items-center p-3.5 border border-dark-border rounded-xl bg-dark-bg cursor-pointer hover:border-brand-500/50 transition-colors">
+                    <input type="checkbox" checked={settings.preventDownload} onChange={() => toggleSetting('preventDownload')} className="w-4 h-4 text-brand-600 rounded border-gray-600 focus:ring-brand-500 bg-dark-surface" />
                     <div className="ml-3 flex-1">
                       <span className="block text-sm font-medium text-white">Prevent Downloads / Copy Data</span>
                       <span className="block text-xs text-gray-400">Restricts right-click, highlighting, and saving.</span>
                     </div>
                   </label>
                   
-                  <label className="flex items-center p-3.5 border border-[#233554] rounded-xl bg-[#0a192f] cursor-pointer hover:border-brand-500/50 transition-colors">
-                    <input type="checkbox" checked={settings.oneTimeView} onChange={() => toggleSetting('oneTimeView')} className="w-4 h-4 text-brand-600 rounded border-gray-600 focus:ring-brand-500 bg-[#1e293b]" />
+                  <label className="flex items-center p-3.5 border border-dark-border rounded-xl bg-dark-bg cursor-pointer hover:border-brand-500/50 transition-colors">
+                    <input type="checkbox" checked={settings.oneTimeView} onChange={() => toggleSetting('oneTimeView')} className="w-4 h-4 text-brand-600 rounded border-gray-600 focus:ring-brand-500 bg-dark-surface" />
                     <div className="ml-3 flex-1">
                       <span className="block text-sm font-medium text-white">One-Time View Sequence</span>
                       <span className="block text-xs text-gray-400">Link self-destructs instantly after first open.</span>
@@ -200,11 +200,11 @@ export default function CreateShare(){
                 <label className="block text-sm font-semibold text-gray-300 mb-2">Link Expiry Configuration</label>
                 <div className="flex gap-4 mb-3">
                   <label className="flex items-center">
-                    <input type="radio" checked={settings.expiryType === 'unlimited'} onChange={() => handleSettingChange('expiryType', 'unlimited')} className="text-brand-500 focus:ring-brand-500 bg-[#0a192f] border-gray-600" />
+                    <input type="radio" checked={settings.expiryType === 'unlimited'} onChange={() => handleSettingChange('expiryType', 'unlimited')} className="text-brand-500 focus:ring-brand-500 bg-dark-bg border-gray-600" />
                     <span className="ml-2 text-sm text-gray-300">Unlimited Time</span>
                   </label>
                   <label className="flex items-center">
-                    <input type="radio" checked={settings.expiryType === 'specific'} onChange={() => handleSettingChange('expiryType', 'specific')} className="text-brand-500 focus:ring-brand-500 bg-[#0a192f] border-gray-600" />
+                    <input type="radio" checked={settings.expiryType === 'specific'} onChange={() => handleSettingChange('expiryType', 'specific')} className="text-brand-500 focus:ring-brand-500 bg-dark-bg border-gray-600" />
                     <span className="ml-2 text-sm text-gray-300">Specific Duration</span>
                   </label>
                 </div>
@@ -215,7 +215,7 @@ export default function CreateShare(){
                       min="1" max="720"
                       value={settings.expiryHours} 
                       onChange={(e) => handleSettingChange('expiryHours', e.target.value)} 
-                      className="w-24 bg-[#0a192f] border border-[#233554] rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-brand-500" 
+                      className="w-24 bg-dark-bg border border-dark-border rounded-lg px-3 py-2 text-white focus:outline-none focus:ring-2 focus:ring-brand-500" 
                     />
                     <span className="text-sm text-gray-400">Hours until expiration</span>
                   </div>
@@ -230,13 +230,13 @@ export default function CreateShare(){
                   <label className="block text-sm font-semibold text-gray-300">Intelligent Data Masking</label>
                   <button 
                     onClick={() => setIsMasking(!isMasking)}
-                    className={`text-xs px-3 py-1.5 rounded-md font-bold transition-colors border ${isMasking ? 'bg-orange-500/20 text-orange-400 border-orange-500/30 shadow-[0_0_10px_rgba(249,115,22,0.2)]' : 'bg-[#233554] text-gray-300 border-[#334155] hover:bg-gray-700'}`}
+                    className={`text-xs px-3 py-1.5 rounded-md font-bold transition-colors border ${isMasking ? 'bg-orange-500/20 text-orange-400 border-orange-500/30 shadow-[0_0_10px_rgba(249,115,22,0.2)]' : 'bg-dark-border text-gray-300 border-dark-border hover:bg-gray-700'}`}
                   >
                     {isMasking ? "Disable Masking Tool" : "Enable Masking Tool"}
                   </button>
                 </div>
                 
-                <div className="flex-1 min-h-[250px] bg-white rounded-xl overflow-hidden relative border-2 border-dashed border-[#334155] flex justify-center items-center shadow-inner">
+                <div className="flex-1 min-h-[250px] bg-white rounded-xl overflow-hidden relative border-2 border-dashed border-dark-border flex justify-center items-center shadow-inner">
                   {!docId ? (
                      <p className="text-gray-400 text-sm font-medium">Select a document to preview & mask.</p>
                   ) : (
@@ -296,23 +296,23 @@ export default function CreateShare(){
             </div>
           </div>
 
-          <div className="pt-8 border-t border-[#233554]">
+          <div className="pt-8 border-t border-dark-border">
             <h3 className="text-base font-bold text-gray-200 mb-4 text-center">Output Generation Format</h3>
             <div className="flex justify-center gap-4 mb-6">
                <button
                   onClick={() => setFormat("link")}
-                  className={`px-8 py-3 rounded-xl text-sm font-bold transition-all shadow-md ${format === 'link' ? 'bg-brand-600 text-white shadow-brand-500/30 scale-105' : 'bg-[#0a192f] border border-[#233554] text-gray-400 hover:border-brand-500/50 hover:text-white'}`}
+                  className={`px-8 py-3 rounded-xl text-sm font-bold transition-all shadow-md ${format === 'link' ? 'bg-brand-600 text-white shadow-brand-500/30 scale-105' : 'bg-dark-bg border border-dark-border text-gray-400 hover:border-brand-500/50 hover:text-white'}`}
                 >Secure Web Link</button>
                 <button
                   onClick={() => setFormat("qr")}
-                  className={`px-8 py-3 rounded-xl text-sm font-bold transition-all shadow-md ${format === 'qr' ? 'bg-brand-600 text-white shadow-brand-500/30 scale-105' : 'bg-[#0a192f] border border-[#233554] text-gray-400 hover:border-brand-500/50 hover:text-white'}`}
+                  className={`px-8 py-3 rounded-xl text-sm font-bold transition-all shadow-md ${format === 'qr' ? 'bg-brand-600 text-white shadow-brand-500/30 scale-105' : 'bg-dark-bg border border-dark-border text-gray-400 hover:border-brand-500/50 hover:text-white'}`}
                 >Scannable QR Code</button>
             </div>
 
             <button 
               onClick={generate}
               disabled={isGenerating || !docId || !receiver}
-              className={`w-full flex justify-center py-4 px-4 border border-transparent rounded-xl shadow-lg shadow-brand-500/20 text-base font-bold text-white bg-emerald-600 hover:bg-emerald-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-[#0a192f] focus:ring-emerald-500 transition-all ${isGenerating || !docId || !receiver ? 'opacity-50 cursor-not-allowed shadow-none' : ''}`}
+              className={`w-full flex justify-center py-4 px-4 border border-transparent rounded-xl shadow-lg shadow-brand-500/20 text-base font-bold text-white bg-emerald-600 hover:bg-emerald-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-dark-bg focus:ring-emerald-500 transition-all ${isGenerating || !docId || !receiver ? 'opacity-50 cursor-not-allowed shadow-none' : ''}`}
             >
               {isGenerating ? 'Generating Secure Artifacts...' : 'Generate & Lockdown Share'}
             </button>
@@ -328,11 +328,11 @@ export default function CreateShare(){
                     type="text"
                     readOnly
                     value={link}
-                    className="flex-1 min-w-0 block w-full px-4 py-3 rounded-none rounded-l-lg text-sm border-[#233554] bg-[#0a192f] text-gray-300 focus:ring-brand-500 focus:border-brand-500 shadow-inner"
+                    className="flex-1 min-w-0 block w-full px-4 py-3 rounded-none rounded-l-lg text-sm border-dark-border bg-dark-bg text-gray-300 focus:ring-brand-500 focus:border-brand-500 shadow-inner"
                   />
                   <button
                     onClick={copyToClipboard}
-                    className="inline-flex items-center px-6 py-3 border border-l-0 border-[#233554] rounded-r-lg bg-brand-600 text-sm font-bold text-white hover:bg-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500 transition-colors"
+                    className="inline-flex items-center px-6 py-3 border border-l-0 border-dark-border rounded-r-lg bg-brand-600 text-sm font-bold text-white hover:bg-brand-500 focus:outline-none focus:ring-2 focus:ring-brand-500 transition-colors"
                   >
                     Copy Path
                   </button>

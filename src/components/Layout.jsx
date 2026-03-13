@@ -100,7 +100,7 @@ export default function Layout() {
         <div className="flex items-center gap-4">
           <button
             onClick={() => setSidebarOpen(true)}
-            className="p-2 text-gray-300 hover:text-white hover:bg-[#233554] rounded-md transition-colors focus:outline-none focus:ring-2 focus:ring-brand-500"
+            className="p-2 text-gray-300 hover:text-white hover:bg-dark-border rounded-md transition-colors focus:outline-none focus:ring-2 focus:ring-brand-500"
           >
             <span className="sr-only">Open sidebar</span>
             <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -123,19 +123,19 @@ export default function Layout() {
           <div className="relative">
             <button 
               onClick={() => setShowNotifications(!showNotifications)}
-              className="p-2 text-gray-300 hover:text-white hover:bg-[#233554] rounded-full transition-colors relative focus:outline-none focus:ring-2 focus:ring-brand-500"
+              className="p-2 text-gray-300 hover:text-white hover:bg-dark-border rounded-full transition-colors relative focus:outline-none focus:ring-2 focus:ring-brand-500"
             >
               <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
               </svg>
               {notifications.length > 0 && (
-                <span className="absolute top-1.5 right-1.5 w-2.5 h-2.5 bg-red-500 rounded-full border-2 border-[#112240]"></span>
+                <span className="absolute top-1.5 right-1.5 w-2.5 h-2.5 bg-red-500 rounded-full border-2 border-dark-surface"></span>
               )}
             </button>
 
             {showNotifications && (
-              <div className="absolute right-0 mt-2 w-80 bg-[#1e293b] border border-[#334155] rounded-xl shadow-2xl py-2 z-50">
-                <div className="px-4 py-2 border-b border-[#334155] flex justify-between items-center">
+              <div className="absolute right-0 mt-2 w-80 bg-dark-surface border border-dark-border rounded-xl shadow-2xl py-2 z-50">
+                <div className="px-4 py-2 border-b border-dark-border flex justify-between items-center">
                   <h3 className="text-sm font-semibold text-white">Notifications</h3>
                   <span className="text-xs bg-brand-500/20 text-brand-400 px-2 py-0.5 rounded-full">{notifications.length} New</span>
                 </div>
@@ -144,7 +144,7 @@ export default function Layout() {
                     <div className="px-4 py-3 text-sm text-gray-400 text-center">No new notifications</div>
                   ) : (
                     notifications.map(n => (
-                      <div key={n.id} className="px-4 py-3 border-b border-[#334155]/50 hover:bg-[#233554] transition-colors">
+                      <div key={n.id} className="px-4 py-3 border-b border-dark-border/50 hover:bg-dark-border transition-colors">
                         <p className="text-sm text-gray-200 mb-2 font-medium">{n.text}</p>
                         <div className="flex gap-2">
                           <button onClick={() => handleRevoke(n)} className="text-xs bg-red-500/20 hover:bg-red-500/30 text-red-400 border border-red-500/30 px-2.5 py-1.5 rounded-md transition-colors font-medium">Revoke Access</button>
@@ -162,7 +162,7 @@ export default function Layout() {
           <div className="relative">
             <button 
               onClick={() => setUserMenuOpen(!userMenuOpen)}
-              className="flex items-center gap-2 p-1.5 text-sm font-medium text-gray-300 hover:text-white rounded-full bg-[#1e293b] border border-[#334155] transition-colors focus:outline-none focus:ring-2 focus:ring-brand-500"
+              className="flex items-center gap-2 p-1.5 text-sm font-medium text-gray-300 hover:text-white rounded-full bg-dark-surface border border-dark-border transition-colors focus:outline-none focus:ring-2 focus:ring-brand-500"
             >
               <div className="w-7 h-7 bg-brand-600 rounded-full flex items-center justify-center text-white font-bold">
                 U
@@ -170,13 +170,13 @@ export default function Layout() {
             </button>
 
             {userMenuOpen && (
-              <div className="absolute right-0 mt-2 w-48 bg-[#1e293b] border border-[#334155] rounded-xl shadow-2xl py-1 z-50">
-                <div className="px-4 py-2 border-b border-[#334155]">
+              <div className="absolute right-0 mt-2 w-48 bg-dark-surface border border-dark-border rounded-xl shadow-2xl py-1 z-50">
+                <div className="px-4 py-2 border-b border-dark-border">
                   <p className="text-sm text-white font-medium">Current User</p>
                 </div>
                 <button
                   onClick={handleLogout}
-                  className="w-full text-left px-4 py-2 text-sm text-gray-300 hover:bg-[#233554] hover:text-white transition-colors"
+                  className="w-full text-left px-4 py-2 text-sm text-gray-300 hover:bg-dark-border hover:text-white transition-colors"
                 >
                   Sign Out
                 </button>
@@ -226,8 +226,8 @@ export default function Layout() {
             ))}
           </nav>
 
-          <div className="p-4 border-t border-[#233554]">
-            <button onClick={handleLogout} className="w-full flex items-center justify-center px-4 py-2.5 bg-[#1e293b] border border-[#334155] rounded-lg text-sm font-medium text-gray-300 hover:text-white hover:bg-gray-700 transition-colors shadow-sm">
+          <div className="p-4 border-t border-dark-border">
+            <button onClick={handleLogout} className="w-full flex items-center justify-center px-4 py-2.5 bg-dark-surface border border-dark-border rounded-lg text-sm font-medium text-gray-300 hover:text-white hover:bg-gray-700 transition-colors shadow-sm">
               <svg className="w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
               </svg>
