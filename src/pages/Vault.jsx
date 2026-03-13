@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef } from "react"
-import UploadBox from "../components/Uploadbox"
+import UploadBox from "../components/UploadBox"
 import { getDocuments } from "../services/documentService"
 import { Link, useNavigate } from "react-router-dom"
 import { supabase } from "../services/supabaseClient"
