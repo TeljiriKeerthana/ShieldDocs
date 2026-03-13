@@ -1,9 +1,46 @@
-import React, { useState } from "react";
 
+import React, { useState } from "react";
+import { scanDocument } from "../services/aiScanner"
 function MaskEditor() {
 
   const [boxes, setBoxes] = useState([]);
+async function handleAIScan() {
 
+  const file = "/sample-id.jpg"
+
+  const result = await scanDocument(file)
+
+  console.log("Sensitive data detected:", result)
+
+  const aiMasks = []
+
+  if(result.aadhaar){
+    aiMasks.push({
+      id: Date.now(),
+      top: 120,
+      left: 120
+    })
+  }
+
+  if(result.phones){
+    aiMasks.push({
+      id: Date.now()+1,
+      top: 200,
+      left: 150
+    })
+  }
+
+  if(result.dob){
+    aiMasks.push({
+      id: Date.now()+2,
+      top: 250,
+      left: 180
+    })
+  }
+
+  setBoxes([...boxes, ...aiMasks])
+
+}
   const addMask = () => {
     const newBox = {
       id: Date.now(),
@@ -20,7 +57,7 @@ function MaskEditor() {
       <h2>Mask Sensitive Data</h2>
 
       <button onClick={addMask}>Add Mask</button>
-
+<button onClick={handleAIScan}>AI Scan Document</button>
       <div
         style={{
           position: "relative",

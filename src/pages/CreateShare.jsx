@@ -3,7 +3,8 @@ import { useLocation } from "react-router-dom"
 import { createShare } from "../services/shareService"
 import { getDocuments } from "../services/documentService"
 import { QRCodeSVG } from 'qrcode.react'
-
+import MaskEditor from "../components/MaskEditor";
+import { scanDocument } from "../services/aiScanner"
 export default function CreateShare(){
   const location = useLocation()
   const [docId, setDocId] = useState("")
@@ -109,6 +110,35 @@ export default function CreateShare(){
       setMaskAreas([...maskAreas, newMask]);
     }
   }
+  const runAIScan = async () => {
+
+  const selectedDoc = docs.find(d => d.id === docId)
+  if(!selectedDoc){
+    alert("Select a document first")
+    return
+  }
+
+  const result = await scanDocument(selectedDoc.file_url)
+
+  console.log("AI detection:", result)
+
+  const aiMasks = []
+
+  if(result.aadhaar){
+    aiMasks.push({ x:30, y:30, w:20, h:8 })
+  }
+
+  if(result.phones){
+    aiMasks.push({ x:40, y:50, w:25, h:8 })
+  }
+
+  if(result.dob){
+    aiMasks.push({ x:50, y:60, w:20, h:8 })
+  }
+
+  setMaskAreas([...maskAreas, ...aiMasks])
+
+}
 
   return (
     <div className="max-w-4xl mx-auto space-y-6 pb-12">
