@@ -1,10 +1,11 @@
+import { scanDocument } from "../services/aiScanner"
 import { useState, useEffect, useRef } from "react"
 import { useLocation } from "react-router-dom"
 import { createShare } from "../services/shareService"
 import { getDocuments } from "../services/documentService"
 import { QRCodeSVG } from 'qrcode.react'
-import MaskEditor from "../components/MaskEditor";
-import { scanDocument } from "../services/aiScanner"
+
+
 export default function CreateShare(){
   const location = useLocation()
   const [docId, setDocId] = useState("")
@@ -254,17 +255,38 @@ export default function CreateShare(){
             </div>
 
             {/* Right Column: Data Masking & Sharing */}
-            <div className="space-y-6 flex flex-col">
-              <div className="flex-1 flex flex-col">
-                <div className="flex justify-between items-center mb-2">
-                  <label className="block text-sm font-semibold text-gray-300">Intelligent Data Masking</label>
-                  <button 
-                    onClick={() => setIsMasking(!isMasking)}
-                    className={`text-xs px-3 py-1.5 rounded-md font-bold transition-colors border ${isMasking ? 'bg-orange-500/20 text-orange-400 border-orange-500/30 shadow-[0_0_10px_rgba(249,115,22,0.2)]' : 'bg-dark-border text-gray-300 border-dark-border hover:bg-gray-700'}`}
-                  >
-                    {isMasking ? "Disable Masking Tool" : "Enable Masking Tool"}
-                  </button>
-                </div>
+      <div className="space-y-6 flex flex-col">
+  <div className="flex-1 flex flex-col">
+
+    <div className="flex justify-between items-center mb-2">
+
+      <label className="block text-sm font-semibold text-gray-300">
+        Intelligent Data Masking
+      </label>
+
+      <div className="flex gap-2">
+
+        <button
+          onClick={() => setIsMasking(!isMasking)}
+          className={`text-xs px-3 py-1.5 rounded-md font-bold transition-colors border ${
+            isMasking
+              ? "bg-orange-500/20 text-orange-400 border-orange-500/30 shadow-[0_0_10px_rgba(249,115,22,0.2)]"
+              : "bg-dark-border text-gray-300 border-dark-border hover:bg-gray-700"
+          }`}
+        >
+          {isMasking ? "Disable Masking Tool" : "Enable Masking Tool"}
+        </button>
+
+        <button
+          onClick={runAIScan}
+          className="text-xs px-3 py-1.5 rounded-md font-bold bg-purple-600 text-white hover:bg-purple-500"
+        >
+          AI Auto Detect
+        </button>
+
+      </div>
+
+    </div>
                 
                 <div className="flex-1 min-h-[250px] bg-white rounded-xl overflow-hidden relative border-2 border-dashed border-dark-border flex justify-center items-center shadow-inner">
                   {!docId ? (
