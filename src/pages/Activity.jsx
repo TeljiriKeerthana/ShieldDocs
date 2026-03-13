@@ -185,7 +185,8 @@ export default function Activity() {
               <div className="flex flex-row md:flex-col gap-3 min-w-[140px]">
                 <button 
                   onClick={() => {
-                    navigator.clipboard.writeText(`${window.location.origin}/view/${share.id}`);
+                    const baseUrl = import.meta.env.VITE_APP_URL || window.location.origin;
+                    navigator.clipboard.writeText(`${baseUrl}/view/${share.id}`);
                     alert("Link copied!");
                   }}
                   className="flex-1 py-2 px-4 rounded-lg text-sm font-medium border border-[#233554] bg-[#0a192f] hover:bg-[#233554] text-white transition-colors flex justify-center items-center gap-2 shadow-sm"

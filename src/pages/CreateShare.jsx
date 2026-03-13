@@ -65,7 +65,8 @@ export default function CreateShare(){
       // In a real app we would save maskAreas array into settings
       const finalSettings = { ...settings, maskedAreas: maskAreas }
       const shareId = await createShare(docId, receiver, finalSettings)
-      const url = window.location.origin + "/view/" + shareId
+      const baseUrl = import.meta.env.VITE_APP_URL || window.location.origin
+      const url = baseUrl + "/view/" + shareId
       setLink(url)
     } catch (err) {
       console.error(err)
