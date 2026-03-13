@@ -1,10 +1,12 @@
 import { Link, Outlet, useLocation } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { supabase } from "../services/supabaseClient";
+import { useDeviceTracking } from "../hooks/useDeviceTracking";
 
 export default function Layout() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const location = useLocation();
+  const { deviceAlert, setDeviceAlert } = useDeviceTracking();
 
   const handleLogout = () => {
     localStorage.removeItem("shielddocs_session");
@@ -134,8 +136,8 @@ export default function Layout() {
             </button>
 
             {showNotifications && (
-              <div className="absolute right-0 mt-2 w-80 bg-dark-surface border border-dark-border rounded-xl shadow-2xl py-2 z-50">
-                <div className="px-4 py-2 border-b border-dark-border flex justify-between items-center">
+              <div className="absolute right-0 mt-2 w-80 bg-[#1e293b] border border-[#334155] rounded-xl shadow-2xl py-2 z-50">
+                <div className="px-4 py-2 border-b border-[#334155] flex justify-between items-center">
                   <h3 className="text-sm font-semibold text-white">Notifications</h3>
                   <span className="text-xs bg-brand-500/20 text-brand-400 px-2 py-0.5 rounded-full">{notifications.length} New</span>
                 </div>
@@ -144,7 +146,7 @@ export default function Layout() {
                     <div className="px-4 py-3 text-sm text-gray-400 text-center">No new notifications</div>
                   ) : (
                     notifications.map(n => (
-                      <div key={n.id} className="px-4 py-3 border-b border-dark-border/50 hover:bg-dark-border transition-colors">
+                      <div key={n.id} className="px-4 py-3 border-b border-[#334155]/50 hover:bg-[#233554] transition-colors">
                         <p className="text-sm text-gray-200 mb-2 font-medium">{n.text}</p>
                         <div className="flex gap-2">
                           <button onClick={() => handleRevoke(n)} className="text-xs bg-red-500/20 hover:bg-red-500/30 text-red-400 border border-red-500/30 px-2.5 py-1.5 rounded-md transition-colors font-medium">Revoke Access</button>
@@ -162,7 +164,7 @@ export default function Layout() {
           <div className="relative">
             <button 
               onClick={() => setUserMenuOpen(!userMenuOpen)}
-              className="flex items-center gap-2 p-1.5 text-sm font-medium text-gray-300 hover:text-white rounded-full bg-dark-surface border border-dark-border transition-colors focus:outline-none focus:ring-2 focus:ring-brand-500"
+              className="flex items-center gap-2 p-1.5 text-sm font-medium text-gray-300 hover:text-white rounded-full bg-[#1e293b] border border-[#334155] transition-colors focus:outline-none focus:ring-2 focus:ring-brand-500"
             >
               <div className="w-7 h-7 bg-brand-600 rounded-full flex items-center justify-center text-white font-bold">
                 U
@@ -170,13 +172,13 @@ export default function Layout() {
             </button>
 
             {userMenuOpen && (
-              <div className="absolute right-0 mt-2 w-48 bg-dark-surface border border-dark-border rounded-xl shadow-2xl py-1 z-50">
-                <div className="px-4 py-2 border-b border-dark-border">
+              <div className="absolute right-0 mt-2 w-48 bg-[#1e293b] border border-[#334155] rounded-xl shadow-2xl py-1 z-50">
+                <div className="px-4 py-2 border-b border-[#334155]">
                   <p className="text-sm text-white font-medium">Current User</p>
                 </div>
                 <button
                   onClick={handleLogout}
-                  className="w-full text-left px-4 py-2 text-sm text-gray-300 hover:bg-dark-border hover:text-white transition-colors"
+                  className="w-full text-left px-4 py-2 text-sm text-gray-300 hover:bg-[#233554] hover:text-white transition-colors"
                 >
                   Sign Out
                 </button>
@@ -214,7 +216,7 @@ export default function Layout() {
                 onClick={() => setSidebarOpen(false)}
                 className={`flex items-center gap-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors ${
                   location.pathname === link.path 
-                    ? "bg-brand-500/20 text-primary-300 border border-brand-500/30 shadow-[0_0_15px_rgba(74,221,242,0.15)]" 
+                    ? "bg-brand-500/20 text-brand-300 border border-brand-500/30 shadow-[0_0_15px_rgba(0,184,212,0.15)]" 
                     : "text-gray-300 hover:bg-dark-border hover:text-white"
                 }`}
               >
@@ -226,8 +228,8 @@ export default function Layout() {
             ))}
           </nav>
 
-          <div className="p-4 border-t border-dark-border">
-            <button onClick={handleLogout} className="w-full flex items-center justify-center px-4 py-2.5 bg-dark-surface border border-dark-border rounded-lg text-sm font-medium text-gray-300 hover:text-white hover:bg-gray-700 transition-colors shadow-sm">
+          <div className="p-4 border-t border-[#233554]">
+            <button onClick={handleLogout} className="w-full flex items-center justify-center px-4 py-2.5 bg-[#1e293b] border border-[#334155] rounded-lg text-sm font-medium text-gray-300 hover:text-white hover:bg-gray-700 transition-colors shadow-sm">
               <svg className="w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
               </svg>
@@ -237,7 +239,32 @@ export default function Layout() {
         </div>
 
         {/* Main Content Area */}
-        <main className="flex-1 overflow-y-auto w-full p-4 sm:p-6 lg:p-8">
+        <main className="flex-1 overflow-y-auto w-full p-4 sm:p-6 lg:p-8 relative">
+          
+          {deviceAlert && (
+            <div className="max-w-7xl mx-auto w-full bg-orange-500/10 border border-orange-500/20 rounded-xl p-4 mb-6 flex justify-between items-center shadow-lg shadow-orange-500/5">
+              <div className="flex items-start gap-4">
+                <div className="bg-orange-500/20 p-2 rounded-full text-orange-400 mt-0.5">
+                  <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                  </svg>
+                </div>
+                <div>
+                  <h3 className="text-sm font-bold text-orange-400">{deviceAlert.message}</h3>
+                  <p className="text-xs text-orange-400/80 mt-1">{deviceAlert.details}</p>
+                </div>
+              </div>
+              <button 
+                onClick={() => setDeviceAlert(null)}
+                className="text-gray-400 hover:text-white p-2"
+              >
+                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+          )}
+
           <div className="max-w-7xl mx-auto w-full">
             <Outlet />
           </div>

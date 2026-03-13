@@ -200,24 +200,24 @@ export default function CreateShare(){
                   Access Constraints
                 </h3>
                 <div className="space-y-3">
-                  <label className="flex items-center p-3.5 border border-dark-border rounded-xl bg-dark-bg cursor-pointer hover:border-brand-500/50 transition-colors">
-                    <input type="checkbox" checked={settings.antiScreenshot} onChange={() => toggleSetting('antiScreenshot')} className="w-4 h-4 text-brand-600 rounded border-gray-600 focus:ring-brand-500 bg-dark-surface" />
+                  <label className="flex items-center p-3.5 border border-[#233554] rounded-xl bg-[#0a192f] cursor-pointer hover:border-brand-500/50 transition-colors">
+                    <input type="checkbox" checked={settings.antiScreenshot} onChange={() => toggleSetting('antiScreenshot')} className="w-4 h-4 text-brand-600 rounded border-gray-600 focus:ring-brand-500 bg-[#1e293b]" />
                     <div className="ml-3 flex-1">
                       <span className="block text-sm font-medium text-white">Strict Anti-Screenshot</span>
                       <span className="block text-xs text-gray-400">Blocks screen capture combinations.</span>
                     </div>
                   </label>
                   
-                  <label className="flex items-center p-3.5 border border-dark-border rounded-xl bg-dark-bg cursor-pointer hover:border-brand-500/50 transition-colors">
-                    <input type="checkbox" checked={settings.preventDownload} onChange={() => toggleSetting('preventDownload')} className="w-4 h-4 text-brand-600 rounded border-gray-600 focus:ring-brand-500 bg-dark-surface" />
+                  <label className="flex items-center p-3.5 border border-[#233554] rounded-xl bg-[#0a192f] cursor-pointer hover:border-brand-500/50 transition-colors">
+                    <input type="checkbox" checked={settings.preventDownload} onChange={() => toggleSetting('preventDownload')} className="w-4 h-4 text-brand-600 rounded border-gray-600 focus:ring-brand-500 bg-[#1e293b]" />
                     <div className="ml-3 flex-1">
                       <span className="block text-sm font-medium text-white">Prevent Downloads / Copy Data</span>
                       <span className="block text-xs text-gray-400">Restricts right-click, highlighting, and saving.</span>
                     </div>
                   </label>
                   
-                  <label className="flex items-center p-3.5 border border-dark-border rounded-xl bg-dark-bg cursor-pointer hover:border-brand-500/50 transition-colors">
-                    <input type="checkbox" checked={settings.oneTimeView} onChange={() => toggleSetting('oneTimeView')} className="w-4 h-4 text-brand-600 rounded border-gray-600 focus:ring-brand-500 bg-dark-surface" />
+                  <label className="flex items-center p-3.5 border border-[#233554] rounded-xl bg-[#0a192f] cursor-pointer hover:border-brand-500/50 transition-colors">
+                    <input type="checkbox" checked={settings.oneTimeView} onChange={() => toggleSetting('oneTimeView')} className="w-4 h-4 text-brand-600 rounded border-gray-600 focus:ring-brand-500 bg-[#1e293b]" />
                     <div className="ml-3 flex-1">
                       <span className="block text-sm font-medium text-white">One-Time View Sequence</span>
                       <span className="block text-xs text-gray-400">Link self-destructs instantly after first open.</span>
@@ -260,7 +260,7 @@ export default function CreateShare(){
                   <label className="block text-sm font-semibold text-gray-300">Intelligent Data Masking</label>
                   <button 
                     onClick={() => setIsMasking(!isMasking)}
-                    className={`text-xs px-3 py-1.5 rounded-md font-bold transition-colors border ${isMasking ? 'bg-orange-500/20 text-orange-400 border-orange-500/30 shadow-[0_0_10px_rgba(249,115,22,0.2)]' : 'bg-dark-border text-gray-300 border-dark-border hover:bg-gray-700'}`}
+                    className={`text-xs px-3 py-1.5 rounded-md font-bold transition-colors border ${isMasking ? 'bg-orange-500/20 text-orange-400 border-orange-500/30 shadow-[0_0_10px_rgba(249,115,22,0.2)]' : 'bg-[#233554] text-gray-300 border-[#334155] hover:bg-gray-700'}`}
                   >
                     {isMasking ? "Disable Masking Tool" : "Enable Masking Tool"}
                   </button>
